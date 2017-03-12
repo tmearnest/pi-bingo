@@ -112,7 +112,7 @@
 			       :background-color "#f5f5f5"
 			       :resize "none"))))))
 
-(defvar *game-file-prefix* "/Users/earnest3/bingo/state")
+(defvar *game-file-prefix* "state")
 (defvar *word-list* nil)
 (defvar *free-word* nil)
 
@@ -124,8 +124,20 @@
 	    (directory (concatenate 'string *game-file-prefix* "*")))
     #'string-greaterp)))
 
+(defun write-game-state (words free)
+  "Write a state file using a word list and the free word"
+  (with-open-file (out (gen-save-filename)
+		       :direction :output
+		       :if-exists :supersede)
+    (with-standard-io-syntax
+      (print `(:words ,words
+		      :free ,free)
+	     out))))
+
 (defun load-game ()
-  "Load current state file and start www"
+  "Load current state file"
+  (unless (get-current-state-filename)
+   (write-game-template))
   (with-open-file (in (get-current-state-filename))
     (with-standard-io-syntax
       (let ((db (read in)))
@@ -145,16 +157,6 @@
 	    hour
 	    minute
 	    second)))
-
-(defun write-game-state (words free)
-  "Write a state file using a word list and the free word"
-  (with-open-file (out (gen-save-filename)
-		       :direction :output
-		       :if-exists :supersede)
-    (with-standard-io-syntax
-      (print `(:words ,words
-		      :free ,free)
-	     out))))
 
 (defun save-game ()
   "Write out a new state file"
