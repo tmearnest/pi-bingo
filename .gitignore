@@ -1,3 +1,6 @@
 *.FASL
 *.fasl
 *.lisp-temp
+state-*
+bingo.img
+sbcl-*
